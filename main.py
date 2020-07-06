@@ -3,7 +3,6 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
-import pandas as pd
 #Function for counting area of a figure
 def count_area(pth):
     # load the image
@@ -84,7 +83,10 @@ def delete_bg(pth):
     #Save to disk
     cv2.imwrite('./ready_images/deleted_bg.png', img_a*255)
 
-def calculate_area(pth):
+def calculate_area():
+    print('Enter the path to your image')
+    pth = input()
     delete_bg(pth)
     area = count_area(pth)
-    print(area)
+    print(f"The area of your figure is {area}")
+calculate_area()
