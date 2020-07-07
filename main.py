@@ -1,5 +1,5 @@
 #Imports
-import cv2
+import cv2 
 import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
@@ -9,23 +9,33 @@ def count_area(pth):
     image = Image.open(pth)
     # convert image to numpy array
     data = np.asarray(image)
+    #shape of the image (size)
     shape = list(data.shape)
+    #Number of non-alpha pixels
     counter = 0
+    #Pixels list
     pixels = []
+    #Filling in pixels list
     for i in data:
         for j in i:
             pixels.append(j)
+    #Counting non-alpha pixels
     for i in pixels:
-        r = i[0]
-        g = i[1]
-        b = i[2]
-        a = i[3]
+        r = i[0] #RED
+        g = i[1] #GREEN
+        b = i[2] #BLUE
+        a = i[3] #ALPHA
+        #Check for alpha
         if a >= 0:
             counter+=1
-    ruler_length = 10 #cm
+    print("Enter your ruler length in cm")
+    ruler_length = int(input()) #cm
     width = shape[1]
+    #Pixel's side
     px = ruler_length/width
+    #Pixel's area
     px_area = px**2
+    #Area of a figure
     area_of_figure = px_area*counter
     return area_of_figure
 def delete_bg(pth):
@@ -36,16 +46,13 @@ def delete_bg(pth):
     MASK_DILATE_ITER = 10
     MASK_ERODE_ITER = 10
     MASK_COLOR = (0.0,0.0,1.0) # In BGR format
-
     #Read image
     img = cv2.imread('data/grey.jpg')
     gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-
     #Edge detection
     edges = cv2.Canny(gray, CANNY_THRESH_1, CANNY_THRESH_2)
     edges = cv2.dilate(edges, None)
     edges = cv2.erode(edges, None)
-
     #Find contours in edges, sort by area
     contour_info = []
     contours, _ = cv2.findContours(edges, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
@@ -57,23 +64,18 @@ def delete_bg(pth):
         ))
     contour_info = sorted(contour_info, key=lambda c: c[2], reverse=True)
     max_contour = contour_info[0]
-
     #Create empty mask, draw filled polygon on it corresponding to largest contour
     #Mask is black, polygon is white
     mask = np.zeros(edges.shape)
     cv2.fillConvexPoly(mask, max_contour[0], (255))
-
     #Smooth mask, then blur it
     mask = cv2.dilate(mask, None, iterations=MASK_DILATE_ITER)
     mask = cv2.erode(mask, None, iterations=MASK_ERODE_ITER)
     mask = cv2.GaussianBlur(mask, (BLUR, BLUR), 0)
-
     mask_stack = np.dstack([mask]*3)    # Create 3-channel alpha mask
-
     #Blend masked img into MASK_COLOR background
     mask_stack  = mask_stack.astype('float32') / 255.0          # Use float matrices, 
     img         = img.astype('float32') / 255.0                 #  for easy blending
-
     masked = (mask_stack * img) + ((1-mask_stack) * MASK_COLOR) # Blend
     masked = (masked * 255).astype('uint8')                     # Convert back to 8-bit 
     #Split image into channels
