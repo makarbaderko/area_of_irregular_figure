@@ -8,7 +8,7 @@ def count_area(pth):
     # load the image
     image = Image.open(pth)
     # convert image to numpy array
-    data = asarray(image)
+    data = np.asarray(image)
     shape = list(data.shape)
     counter = 0
     pixels = []
@@ -87,6 +87,6 @@ def calculate_area():
     print('Enter the path to your image')
     pth = input()
     delete_bg(pth)
-    area = count_area(pth)
-    print(f"The area of your figure is {area}")
+    area = count_area('./ready_images/deleted_bg.png')
+    print(f"The area of your figure is {area} cm2")
 calculate_area()
