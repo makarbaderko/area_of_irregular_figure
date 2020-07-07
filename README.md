@@ -1,5 +1,6 @@
-# Problem
+# Documentation
 
+## Problem
 Find area of an irregular shape, by photo.
 
 ## Installation
