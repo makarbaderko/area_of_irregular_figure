@@ -31,13 +31,20 @@ def count_area(pth):
     print("Enter your ruler length in cm")
     ruler_length = int(input()) #cm
     width = shape[1]
+    '''
     #Pixel's side
-    px = ruler_length/width
+    px = width/ruler_length
     #Pixel's area
     px_area = px**2
     #Area of a figure
     area_of_figure = px_area*counter
+    return area_of_figure'''
+    #DPI = (число пикселей в фотографии по горизонтали х 2,54) / ширина фотографии
+    #Dots per cm
+    dpc = width*2.54 / ruler_length
+    area_of_figure = counter/dpc
     return area_of_figure
+    
 def delete_bg(pth):
     #Parameters
     BLUR = 21
@@ -82,9 +89,6 @@ def delete_bg(pth):
     c_red, c_green, c_blue = cv2.split(img)
     #Merge with mask got on one of a previous steps
     img_a = cv2.merge((c_red, c_green, c_blue, mask.astype('float32') / 255.0))
-    #Save to disk
-    cv2.imwrite('./ready_images/deleted_bg.png', img_a*255)
-
 def calculate_area():
     print('Enter the path to your image')
     pth = input()
